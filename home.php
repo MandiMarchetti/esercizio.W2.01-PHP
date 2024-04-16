@@ -1,3 +1,13 @@
+<?php
+
+if (!isset($_SESSION)) {
+    session_start();
+}
+
+?>
+
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -39,7 +49,7 @@
     <div class="container fluid">
         <div class="row ">
             <div class="col d-flex justify-content-center">
-                <h1 class="text-success-emphasis">😎 Welcome Home !!!!</h1>
+                <h1 class="text-success-emphasis">😎 Welcome Home <?php echo $_SESSION['name']; ?> !!!!</h1>
             </div>
         </div>
     </div>

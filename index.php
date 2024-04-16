@@ -1,37 +1,31 @@
 <?php
-include('conection.php')
+include('conection.php');
 
-if(issets($_POST['email']) || issets($_POST['password'])) {
+if (strlen($_POST['email']) == 0) {
+    echo "Put your email, please!";
+} else if (strlen($_POST['password']) == 0) {
+    echo "Put your password, please!";
+} else {
+    $email = $mysqli->real_escape_string($_POST['email']);
+    $password = $mysqli->real_escape_string($_POST['password']);
 
-    if(strlen($_POST['email']) == 0){
-        echo "Put your email, please!";
-    } else if(strlen($_POST['senha']) == 0){
-        echo "Put your password, please!";
+    $sql_code = "SELECT * FROM users WHERE email = '$email' AND password ='$password'";
+    $sql_query = $mysqli->query($sql_code) or die("Error connecting to SQL: " . $mysqli->error);
+
+    $quantity = $sql_query->num_rows;
+
+    if ($quantity == 1) {
+        $user = $sql_query->fetch_assoc();
+
+        session_start();
+        $_SESSION['id'] = $user['id'];
+        $_SESSION['name'] = $user['name'];
     } else {
-
-        $email = $mysqli->real_escape_string($_POST['email']);
-        $password = $mysqli->real_escape_string($_POST['password']);
-
-        $sql_code = "SELECT * FROM users WHERE email = '$email' AND password ='$password'";
-        $sql_query = $mysqli->query($sql_code) or die("Erro to connect SQL " . $mysqli->error);
-
-        $quantity = $sql_query->num_rows;
-
-        if($quantity == 1) {
-
-            $user = $sql_query->fetch_assoc();
-
-            if(!isset($_SESSION)){
-                session_start();
-            }
-            $_SESSION['id'] = $user['id'];
-            $_SESSION['name'] = $user['name'];
-
-        } else {
-            echo "Account not found! Password or email not correct!";
-        }
-
+        echo "Account not found! Password or email not correct!";
     }
+}
+if (!isset($_POST['email']) || !isset($_POST['password'])) {
+    echo 'Register yourself';
 }
 ?>
 

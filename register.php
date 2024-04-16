@@ -1,3 +1,27 @@
+<?php
+
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    $con = mysqli_connect('localhost', 'root', '', 'login');
+
+    $stmt = $con->prepare("INSERT INTO users (id, name, email, password) VALUES (NULL, ?, ?, ?)");
+    $stmt->bind_param("sss", $name, $email, $password);
+
+    $name = $_POST['name'];
+    $email = $_POST['email'];
+    $password = $_POST['password'];
+    $stmt->execute();
+
+    if ($stmt->affected_rows > 0) {
+        echo "Contact Records Inserted";
+    } else {
+        echo "Error: " . $stmt->error;
+    }
+
+    $stmt->close();
+    mysqli_close($con);
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -16,9 +40,9 @@
                     <h3 style="font-style: italic;">Register Page</h3>
                 </div>
                 <div class="col-6 mt-3">
-                    <form action="" method="POST">
+                    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
                         <div class="mb-2">
-                            <label for="Name" class="form-label">Name</label>
+                            <label for="name" class="form-label">Name</label>
                             <input type="text" class="form-control" name="name">
                         </div>
                         <div class="mb-3">

@@ -1,5 +1,5 @@
 <?php
-include('conection.php');
+include __DIR__ . 'conection.php';
 
 
 if (isset($_POST['email']) || isset($_POST['password'])) {

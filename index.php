@@ -1,32 +1,39 @@
 <?php
 include('conection.php');
 
-if (strlen($_POST['email']) == 0) {
-    echo "Put your email, please!";
-} else if (strlen($_POST['password']) == 0) {
-    echo "Put your password, please!";
-} else {
-    $email = $mysqli->real_escape_string($_POST['email']);
-    $password = $mysqli->real_escape_string($_POST['password']);
 
-    $sql_code = "SELECT * FROM users WHERE email = '$email' AND password ='$password'";
-    $sql_query = $mysqli->query($sql_code) or die("Error connecting to SQL: " . $mysqli->error);
-
-    $quantity = $sql_query->num_rows;
-
-    if ($quantity == 1) {
-        $user = $sql_query->fetch_assoc();
-
-        session_start();
-        $_SESSION['id'] = $user['id'];
-        $_SESSION['name'] = $user['name'];
+if (isset($_POST['email']) || isset($_POST['password'])) {
+    if (strlen($_POST['email']) == 0) {
+        echo "Put your email, please!";
+    } else if (strlen($_POST['password']) == 0) {
+        echo "Put your password, please!";
     } else {
-        echo "Account not found! Password or email not correct!";
+
+        $email = $mysqli->real_escape_string($_POST['email']);
+        $password = $mysqli->real_escape_string($_POST['password']);
+
+        $sql_code = "SELECT * FROM users WHERE email = '$email' AND password ='$password'";
+        $sql_query = $mysqli->query($sql_code) or die("Error connecting to SQL: " . $mysqli->error);
+
+        $quantity = $sql_query->num_rows;
+
+        if ($quantity == 1) {
+
+            $user = $sql_query->fetch_assoc();
+
+            if (!isset($_SESSION)) {
+                session_start();
+            }
+            $_SESSION['id'] = $user['id'];
+            $_SESSION['name'] = $user['name'];
+
+            header("Location: home.php");
+        } else {
+            echo 'Account not found! Email or password is wrong! Are you sure you are registered??';
+        }
     }
 }
-if (!isset($_POST['email']) || !isset($_POST['password'])) {
-    echo 'Register yourself';
-}
+
 ?>
 
 
@@ -58,7 +65,7 @@ if (!isset($_POST['email']) || !isset($_POST['password'])) {
                             <input type="password" class="form-control" name="password">
                         </div>
                         <button type="submit" class="btn btn-primary rounded-pill mt-3">Submit</button>
-                        <p class="p-0 mt-1">If you are not register, <a href="register.php"> Click Here!</a></p>
+                        <p class="p-0 mt-1">If you are not registered: <a href="register.php"> Click Here!</a></p>
                     </form>
                 </div>
             </div>

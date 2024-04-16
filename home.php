@@ -1,9 +1,6 @@
 <?php
 
-if (!isset($_SESSION)) {
-    session_start();
-}
-
+include('protect.php');
 ?>
 
 
@@ -33,11 +30,12 @@ if (!isset($_SESSION)) {
                         <li class="nav-item">
                             <a class="nav-link active" aria-current="page" href="#">Home</a>
                         </li>
-                        <li class="nav-item">
+                        <!-- <li class="nav-item">
                             <a class="nav-link" href="#">Profile</a>
-                        </li>
+                        </li> -->
                         <li class="nav-item">
-                            <a class="nav-link text-danger" href="#">Log out!</a>
+                            <a class="nav-link text-danger" href="logout.php">
+                                Log out!</a>
                         </li>
 
                     </ul>

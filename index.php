@@ -1,38 +1,74 @@
 <?php
-include __DIR__ . 'conection.php';
-
 
 if (isset($_POST['email']) || isset($_POST['password'])) {
-    if (strlen($_POST['email']) == 0) {
-        echo "Put your email, please!";
-    } else if (strlen($_POST['password']) == 0) {
-        echo "Put your password, please!";
-    } else {
+    include('conection.php');
 
-        $email = $mysqli->real_escape_string($_POST['email']);
-        $password = $mysqli->real_escape_string($_POST['password']);
+    $email = $_POST['email'];
+    $password = $_POST['password'];
 
-        $sql_code = "SELECT * FROM users WHERE email = '$email' AND password ='$password'";
-        $sql_query = $mysqli->query($sql_code) or die("Error connecting to SQL: " . $mysqli->error);
+    $sql_code = "SELECT * FROM users WHERE email = '$email' LIMIT 1";
+    $sql_exec = $mysqli->query($sql_code) or die("Error connecting to SQL: " . $mysqli->error);
 
-        $quantity = $sql_query->num_rows;
+    $user = $sql_exec->fetch_assoc();
 
-        if ($quantity == 1) {
 
-            $user = $sql_query->fetch_assoc();
+    if ($user && password_verify($password, $user['password'])) {
 
-            if (!isset($_SESSION)) {
-                session_start();
-            }
-            $_SESSION['id'] = $user['id'];
-            $_SESSION['name'] = $user['name'];
-
-            header("Location: home.php");
-        } else {
-            echo 'Account not found! Email or password is wrong! Are you sure you are registered??';
+        if (!isset($_SESSION)) {
+            session_start();
         }
+        $_SESSION['id'] = $user['id'];
+        $_SESSION['name'] = $user['name'];
+
+        header("Location: home.php");
+    } else {
+        echo "
+        <script>
+        alert('Registration Failed. Please try again later.');
+        </script>
+        ";
     }
 }
+
+
+
+// if (isset($_POST['email']) || isset($_POST['password'])) {
+
+//     include('conection.php');
+
+
+//     if (strlen($_POST['email']) == 0) {
+//         echo "Put your email, please!";
+//     } else if (strlen($_POST['password']) == 0) {
+//         echo "Put your password, please!";
+//     } else {
+
+//         $email = $mysqli->real_escape_string($_POST['email']);
+//         $password = $mysqli->real_escape_string($_POST['password']);
+
+//         $sql_code = "SELECT * FROM users WHERE email = '$email' AND password ='$password'";
+//         $sql_exec = $mysqli->query($sql_code) or die("Error connecting to SQL: " . $mysqli->error);
+
+//         $quantity = $sql_exec->num_rows;
+
+//         if ($quantity == 1 && password_verify($password, $user['password'])) {
+
+//             $user = $sql_exec->fetch_assoc();
+
+//             if (!isset($_SESSION)) {
+//                 session_start();
+//             }
+//             $_SESSION['id'] = $user['id'];
+//             $_SESSION['name'] = $user['name'];
+
+
+//             header("Location: home.php");
+//         } else {
+//             echo 'Account not found! Email or password is wrong! Are you sure you are registered??';
+//             header("Location: register.php");
+//         }
+//     }
+// }
 
 ?>
 

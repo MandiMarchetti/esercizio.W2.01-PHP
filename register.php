@@ -1,25 +1,33 @@
 <?php
 
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    $con = mysqli_connect('localhost', 'root', '', 'login');
 
-    $stmt = $con->prepare("INSERT INTO users (id, name, email, password) VALUES (NULL, ?, ?, ?)");
-    $stmt->bind_param("sss", $name, $email, $password);
+if (isset($_POST['email']) || isset($_POST['password'])) {
+    include('conection.php');
 
     $name = $_POST['name'];
     $email = $_POST['email'];
-    $password = $_POST['password'];
-    $stmt->execute();
+    $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
 
-    if ($stmt->affected_rows > 0) {
-        echo "Contact Records Inserted";
+
+    $result = $mysqli->query("INSERT INTO users (name, email, password) VALUES ('$name', '$email', '$password' )");
+
+    if ($result) {
+        echo "
+        <script>
+        alert('Register Success');
+        window.location.href = 'login.php'; // Redirect to login page
+        </script>
+        ";
+        header('Location: index.php');
     } else {
-        echo "Error: " . $stmt->error;
+        echo "
+        <script>
+        alert('Registration Failed. Please try again later.');
+        </script>
+        ";
     }
-
-    $stmt->close();
-    mysqli_close($con);
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -40,7 +48,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     <h3 style="font-style: italic;">Register Page</h3>
                 </div>
                 <div class="col-6 mt-3">
-                    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="POST">
+                    <form action="" method="POST">
                         <div class="mb-2">
                             <label for="name" class="form-label">Name</label>
                             <input type="text" class="form-control" name="name">
